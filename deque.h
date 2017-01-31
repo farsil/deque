@@ -92,8 +92,6 @@ NODE_TYPE(T) {          \
  * // t_deque and t_dequq2 are the same type
  * typedef STRUCT_DEQUE(int) t_deque;
  * typedef DEQUE_TYPE(int) t_deque2;
- *
- * typedef STRUCT_DEQUE(int) t_deque;
  */
 #define STRUCT_DEQUE(T)     \
 DEQUE_TYPE(T) {             \
@@ -113,7 +111,7 @@ DEQUE_TYPE(T) {             \
  * Returns a pointer to the first node. Mostly used with NODE_NEXT to iterate
  * over a deque, eg:
  *
- * for (t_node node = DEQUE_FIRST(deque); node != NULL;
+ * for (t_node* node = DEQUE_FIRST(deque); node != NULL;
  *      node = NODE_NEXT(node))
  * {
  *      // your code using node here
