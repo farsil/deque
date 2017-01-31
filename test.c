@@ -1,10 +1,12 @@
-#include "deque.h"
+/* See LICENSE for license details. */
+
 #include <stdio.h>
+#include "deque.h"
 
 typedef STRUCT_NODE(int) t_node;
 typedef STRUCT_DEQUE(int) t_deque;
 
-void validate_structure(t_deque* deque, t_node* first, t_node* last, 
+void validate_structure(t_deque* deque, t_node* first, t_node* last,
         size_t size)
 {
     assert(DEQUE_FIRST(deque) == first);
@@ -159,7 +161,7 @@ int main(int argc, char* argv[])
 
     DEQUE_INIT(&deque);
     validate_structure(&deque, NULL, NULL, 0);
-    
+
     test_nodes(&deque);
     test_data(&deque);
 

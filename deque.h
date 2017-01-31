@@ -1,8 +1,4 @@
-#ifndef _DEQUE_H_
-#define	_DEQUE_H_
-
-#include <stdlib.h>
-#include <assert.h>
+/* See LICENSE for license details. */
 
 /*
  * Note, for the sake of readibility, a C++ like notation will be used to
@@ -12,6 +8,12 @@
  * deque<T> represents the same type declared as STRUCT_DEQUE(T).
  * typename is an unquoted string representing a type name.
  */
+
+#ifndef _DEQUE_H_
+#define _DEQUE_H_
+
+#include <stdlib.h>
+#include <assert.h>
 
 /*
  * Defines the node structure. It holds statically allocated data and the
@@ -94,7 +96,7 @@ NODE_TYPE(T) {          \
  * typedef STRUCT_DEQUE(int) t_deque;
  */
 #define STRUCT_DEQUE(T)     \
-DEQUE_TYPE(T) {				\
+DEQUE_TYPE(T) {             \
     NODE_TYPE(T)* first;    \
     NODE_TYPE(T)* last;     \
     size_t size;            \
