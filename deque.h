@@ -183,9 +183,9 @@ DEQUE_TYPE(T) {             \
  */
 #define DEQUE_PUSH(deque, T, value) do          \
 {                                               \
-    NODE_TYPE(T)* node = NODE_ALLOC(T);         \
-    NODE_DATA(node) = (value);                  \
-    DEQUE_PUSH_NODE((deque), node);             \
+    NODE_TYPE(T)* _new_node = NODE_ALLOC(T);    \
+    NODE_DATA(_new_node) = (value);             \
+    DEQUE_PUSH_NODE((deque), _new_node);        \
 } while (0)
 
 /*
@@ -208,11 +208,11 @@ DEQUE_TYPE(T) {             \
  *
  * Same as DEQUE_PUSH, but inserts at the end of the deque.
  */
-#define DEQUE_APPEND(deque, T, value) do    \
-{                                           \
-    NODE_TYPE(T)* node = NODE_ALLOC(T);     \
-    NODE_DATA(node) = (value);              \
-    DEQUE_APPEND_NODE((deque), node);       \
+#define DEQUE_APPEND(deque, T, value) do        \
+{                                               \
+    NODE_TYPE(T)* _new_node = NODE_ALLOC(T);    \
+    NODE_DATA(_new_node) = (value);             \
+    DEQUE_APPEND_NODE((deque), _new_node);      \
 } while (0)
 
 /*
@@ -237,9 +237,9 @@ DEQUE_TYPE(T) {             \
  */
 #define DEQUE_POP(deque, T) do                          \
 {                                                       \
-    NODE_TYPE(T)* prev_first = DEQUE_FIRST((deque));    \
+    NODE_TYPE(T)* _prev_first = DEQUE_FIRST((deque));   \
     DEQUE_POP_NODE((deque));                            \
-    NODE_FREE(prev_first);                              \
+    NODE_FREE(_prev_first);                             \
 } while (0)
 
 
@@ -261,11 +261,11 @@ DEQUE_TYPE(T) {             \
  */
 #define DEQUE_FREE(deque, T) do                                 \
 {                                                               \
-    NODE_TYPE(T)* prev_first;                                   \
-    while ((prev_first = DEQUE_FIRST((deque))) != NULL)         \
+    NODE_TYPE(T)* _prev_first;                                  \
+    while ((_prev_first = DEQUE_FIRST((deque))) != NULL)        \
     {                                                           \
         DEQUE_FIRST((deque)) = NODE_NEXT(DEQUE_FIRST((deque))); \
-        NODE_FREE(prev_first);                                  \
+        NODE_FREE(_prev_first);                                 \
     }                                                           \
     DEQUE_LAST((deque)) = NULL;                                 \
     DEQUE_SIZE((deque)) = 0;                                    \
