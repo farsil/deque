@@ -136,30 +136,32 @@ void test_data(t_deque* deque)
     DEQUE_CLEAR(deque);
     ASSERT_STRUCTURE(deque, NULL, NULL, 0);
 
-    // Check if the data of the first element is still there
+    // Traverse the structure and check if the data is still there
     assert(NODE_DATA(first) == 6);
-
-    // Traverse the structure and check if the rest of the data is still there
     aux = NODE_NEXT(first);
-    assert(NODE_DATA(aux) == 4);
 
+    assert(NODE_DATA(aux) == 4);
     aux = NODE_NEXT(aux);
+
     assert(NODE_DATA(aux) == 5);
     assert(last == aux);
-
     aux = NODE_NEXT(aux);
+
+    // End of the queue
     assert(aux == NULL);
 
     // Fix the memory leak. Unnecessary, but I like doing things clean :)
-    for (aux = first; aux != NULL; aux = NODE_NEXT(aux))
+    // Note: this is also the proper way to desctructively iterate a deque.
+    while ((aux = first) != NULL)
+    {
+        first = NODE_NEXT(first);
         NODE_FREE(aux);
+    }
 }
 
 int main(int argc, char* argv[])
 {
-    t_deque deque;
-
-    DEQUE_INIT(&deque);
+    t_deque deque = DEQUE_DEFAULT;
     ASSERT_STRUCTURE(&deque, NULL, NULL, 0);
 
     test_nodes(&deque);
