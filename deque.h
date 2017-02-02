@@ -107,7 +107,7 @@ DEQUE_TYPE(T)               \
  * for (NODE_TYPE(T)* node = DEQUE_FIRST(deque); node != NULL;
  *      node = NODE_NEXT(node))
  * {
- *      // your code using node here 
+ *      // your code using node here
  * }
  */
 #define DEQUE_FIRST(deque) ((deque)->first)
@@ -141,7 +141,7 @@ DEQUE_TYPE(T)               \
 /*
  * T DEQUE_TAIL(DEQUE_TYPE(T)* deque);
  *
- * Same as DEQUE_HEAD, but returns the content of the last node. 
+ * Same as DEQUE_HEAD, but returns the content of the last node.
  */
 #define DEQUE_TAIL(deque) NODE_DATA(DEQUE_LAST((deque)))
 
