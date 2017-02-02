@@ -1,14 +1,5 @@
 /* See LICENSE for license details. */
 
-/*
- * Note, for the sake of readibility, a C++ like notation will be used to
- * indicate function parameters in the comments:
- *
- * node<T> represents the same type declared as STRUCT_NODE(T).
- * deque<T> represents the same type declared as STRUCT_DEQUE(T).
- * typename is an unquoted string representing a type name.
- */
-
 #ifndef _DEQUE_H_
 #define _DEQUE_H_
 
@@ -36,7 +27,8 @@
  * typedef NODE_TYPE(int) t_node2;
  */
 #define STRUCT_NODE(T)  \
-NODE_TYPE(T) {          \
+NODE_TYPE(T)            \
+{                       \
     T data;             \
     NODE_TYPE(T)* next; \
 }
@@ -47,7 +39,7 @@ NODE_TYPE(T) {          \
 #define NODE_TYPE(T) struct node_##T
 
 /*
- * node<T>* NODE_ALLOC(typename T)
+ * NODE_TYPE(T)* NODE_ALLOC(typename T)
  *
  * Allocates a node struct which data has type T. Used by DEQUE_PUSH and
  * DEQUE_APPEND. It uses malloc() internally.
@@ -55,26 +47,26 @@ NODE_TYPE(T) {          \
 #define NODE_ALLOC(T) (NODE_TYPE(T)*)malloc(sizeof(NODE_TYPE(T)))
 
 /*
- * void NODE_FREE(node<T>* node)
+ * void NODE_FREE(NODE_TYPE(T)* node)
  *
  * Deallocates a node struct. Used by DEQUE_POP. It uses free() internally.
  */
-#define NODE_FREE(node) free(node)
+#define NODE_FREE(node) free((node))
 
 /*
- * node<T>* NODE_NEXT(node<T>* node);
+ * NODE_TYPE(T)* NODE_NEXT(NODE_TYPE(T)* node);
  *
  * Returns the pointer to the next node.
  */
-#define NODE_NEXT(node) (node)->next
+#define NODE_NEXT(node) ((node)->next)
 
 /*
- * T NODE_DATA(node<T>* node);
+ * T NODE_DATA(NODE_TYPE(T)* node);
  *
  * Returns the data that the node contains. It is possible to modify the data
  * of a node by using this macro on the left hand side.
  */
-#define NODE_DATA(node) (node)->data
+#define NODE_DATA(node) ((node)->data)
 
 /*
  * Defines the deque structure. Holds a pointer to the head and the tail of the
@@ -89,12 +81,13 @@ NODE_TYPE(T) {          \
  * it should be typedef'd. If you ever need to refer to the type
  * again you can use the macro DEQUE_TYPE(T):
  *
- * // t_deque and t_dequq2 are the same type
+ * // t_deque and t_deque2 are the same type
  * typedef STRUCT_DEQUE(int) t_deque;
  * typedef DEQUE_TYPE(int) t_deque2;
  */
 #define STRUCT_DEQUE(T)     \
-DEQUE_TYPE(T) {             \
+DEQUE_TYPE(T)               \
+{                           \
     NODE_TYPE(T)* first;    \
     NODE_TYPE(T)* last;     \
     size_t size;            \
@@ -106,50 +99,54 @@ DEQUE_TYPE(T) {             \
 #define DEQUE_TYPE(T) struct deque_##T
 
 /*
- * node<T>* DEQUE_FIRST(deque<T>* deque);
+ * NODE_TYPE(T)* DEQUE_FIRST(DEQUE_TYPE(T)* deque);
  *
  * Returns a pointer to the first node. Mostly used with NODE_NEXT to iterate
  * over a deque, eg:
  *
- * for (t_node* node = DEQUE_FIRST(deque); node != NULL;
+ * for (NODE_TYPE(T)* node = DEQUE_FIRST(deque); node != NULL;
  *      node = NODE_NEXT(node))
  * {
- *      // your code using node here
+ *      // your code using node here 
  * }
  */
-#define DEQUE_FIRST(deque) (deque)->first
+#define DEQUE_FIRST(deque) ((deque)->first)
 
 /*
- * node<T>* DEQUE_LAST(deque<T>* deque);
+ * NODE_TYPE(T)* DEQUE_LAST(DEQUE_TYPE(T)* deque);
  *
  * Returns a pointer to the last node. Mostly used internally, but can be
  * useful sometimes.
  */
-#define DEQUE_LAST(deque) (deque)->last
+#define DEQUE_LAST(deque) ((deque)->last)
 
 /*
- * size_t DEQUE_SIZE(deque<T>* deque);
+ * size_t DEQUE_SIZE(DEQUE_TYPE(T)* deque);
  *
  * Returns the deque size.
  */
-#define DEQUE_SIZE(deque) (deque)->size
+#define DEQUE_SIZE(deque) ((deque)->size)
 
 /*
- * T DEQUE_HEAD(deque<T>* deque);
+ * T DEQUE_HEAD(DEQUE_TYPE(T)* deque);
  *
- * Returns the content of the first node.
+ * Returns the content of the first node. Not NULL-safe, so you should always
+ * check that the queue is not empty before using DEQUE_HEAD:
+ *
+ * if (DEQUE_SIZE(deque))
+ *      val = DEQUE_HEAD(deque);
  */
 #define DEQUE_HEAD(deque) NODE_DATA(DEQUE_FIRST((deque)))
 
 /*
- * T DEQUE_TAIL(deque<T>* deque);
+ * T DEQUE_TAIL(DEQUE_TYPE(T)* deque);
  *
- * Returns the content of the last node.
+ * Same as DEQUE_HEAD, but returns the content of the last node. 
  */
 #define DEQUE_TAIL(deque) NODE_DATA(DEQUE_LAST((deque)))
 
 /*
- * void DEQUE_INIT(deque<T>* deque);
+ * void DEQUE_INIT(DEQUE_TYPE(T)* deque);
  *
  * Initializes the deque to an empty deque.
  */
@@ -161,7 +158,14 @@ DEQUE_TYPE(T) {             \
 } while (0)
 
 /*
- * void DEQUE_PUSH_NODE(deque<T>* deque, node<T>* node);
+ * Convenience macro that expands to a struct initializer:
+ *
+ * DEQUE_TYPE(T) deque = DEQUE_DEFAULT;
+ */
+#define DEQUE_DEFAULT { NULL, NULL, 0 }
+
+/*
+ * void DEQUE_PUSH_NODE(DEQUE_TYPE(T)* deque, NODE_TYPE(T)* node);
  *
  * Inserts a node at the beginning of the deque. Note that the node must be
  * preallocated before calling DEQUE_PUSH_NODE.
@@ -175,7 +179,7 @@ DEQUE_TYPE(T) {             \
 } while (0)
 
 /*
- * void DEQUE_PUSH(deque<T>* deque, typename T, T data);
+ * void DEQUE_PUSH(DEQUE_TYPE(T)* deque, typename T, T data);
  *
  * Inserts data at the beginning of the deque. Allocates a node using
  * NODE_ALLOC, then sets its data to the provided argument. The typename must
@@ -189,7 +193,7 @@ DEQUE_TYPE(T) {             \
 } while (0)
 
 /*
- * void DEQUE_APPEND_NODE(deque<T>* deque, node<T>* node);
+ * void DEQUE_APPEND_NODE(DEQUE_TYPE(T)* deque, NODE_TYPE(T)* node);
  *
  * Same as DEQUE_PUSH_NODE, but inserts at the end of the deque.
  */
@@ -204,7 +208,7 @@ DEQUE_TYPE(T) {             \
 } while (0)
 
 /*
- * void DEQUE_APPEND(deque<T>* deque, typename T, T data);
+ * void DEQUE_APPEND(DEQUE_TYPE(T)* deque, typename T, T data);
  *
  * Same as DEQUE_PUSH, but inserts at the end of the deque.
  */
@@ -216,7 +220,7 @@ DEQUE_TYPE(T) {             \
 } while (0)
 
 /*
- * void DEQUE_POP_NODE(deque<T>* deque);
+ * void DEQUE_POP_NODE(DEQUE_TYPE(T)* deque);
  *
  * Removes the first element of the deque. Note that it does not free its
  * resources, if you need to do that, use DEQUE_POP instead.
@@ -230,7 +234,7 @@ DEQUE_TYPE(T) {             \
 } while (0)
 
 /*
- * void DEQUE_POP(deque<T>* deque, typename T);
+ * void DEQUE_POP(DEQUE_TYPE(T)* deque, typename T);
  *
  * Removes the first element from the deque, deallocating its resources using
  * NODE_FREE.
@@ -244,7 +248,7 @@ DEQUE_TYPE(T) {             \
 
 
 /*
- * void DEQUE_CLEAR(deque<T>* deque);
+ * void DEQUE_CLEAR(DEQUE_TYPE(T)* deque);
  *
  * Removes all data in the deque. Note that it does not attempt to free the
  * memory used by the nodes, if you need to do that, use DEQUE_FREE instead.
@@ -254,7 +258,7 @@ DEQUE_TYPE(T) {             \
 #define DEQUE_CLEAR DEQUE_INIT
 
 /*
- * void DEQUE_FREE(deque<t>* deque, typename T);
+ * void DEQUE_FREE(DEQUE_TYPE(T)* deque, typename T);
  *
  * Frees all the nodes in the deque and clears it. This operation has an O(n)
  * complexity.
